@@ -9,10 +9,12 @@ import { HttpRequestService, UndiciFetcher } from '@/core/HttpRequestService.js'
 import { LoggerService } from '@/core/LoggerService.js';
 import { bindThis } from '@/decorators.js';
 import type Logger from '@/logger.js';
+import type { Dispatcher } from 'undici';
+import { DevNull } from '@/misc/dev-null.js';
 
 type Request = {
 	url: string;
-	method: string;
+	method: Dispatcher.HttpMethod;
 	headers: Record<string, string>;
 };
 
@@ -41,10 +43,10 @@ export class ApRequestService {
 		private httpRequestService: HttpRequestService,
 		private loggerService: LoggerService,
 	) {
-		this.logger = this.loggerService?.getLogger('ap-request'); // なぜか TypeError: Cannot read properties of undefined (reading 'getLogger') と言われる
-		this.undiciFetcher = new UndiciFetcher(this.httpRequestService.getStandardUndiciFetcherOption({
+		this.logger = this.loggerService.getLogger('ap-request'); // なぜか TypeError: Cannot read properties of undefined (reading 'getLogger') と言われる
+		this.undiciFetcher = this.httpRequestService.createFetcher({
 			maxRedirections: 0,
-		}), this.logger );
+		}, {}, this.logger);
 	}
 
 	@bindThis
@@ -57,7 +59,7 @@ export class ApRequestService {
 			method: 'POST',
 			headers: this.objectAssignWithLcKey({
 				'Date': new Date().toUTCString(),
-				'Host': u.hostname,
+				'Host': u.host,
 				'Content-Type': 'application/activity+json',
 				'Digest': digestHeader,
 			}, args.additionalHeaders),
@@ -83,7 +85,7 @@ export class ApRequestService {
 			headers: this.objectAssignWithLcKey({
 				'Accept': 'application/activity+json, application/ld+json',
 				'Date': new Date().toUTCString(),
-				'Host': new URL(args.url).hostname,
+				'Host': new URL(args.url).host,
 			}, args.additionalHeaders),
 		};
 
@@ -106,6 +108,8 @@ export class ApRequestService {
 		request.headers = this.objectAssignWithLcKey(request.headers, {
 			Signature: signatureHeader,
 		});
+		// node-fetch will generate this for us. if we keep 'Host', it won't change with redirects!
+		delete request.headers['host'];
 
 		return {
 			request,
@@ -161,14 +165,15 @@ export class ApRequestService {
 			},
 		});
 
-		await this.undiciFetcher.fetch(
+		const response = await this.undiciFetcher.request(
 			url,
 			{
 				method: req.request.method,
 				headers: req.request.headers,
 				body,
-			}
+			},
 		);
+		response.body.pipe(new DevNull());
 	}
 
 	/**
@@ -195,7 +200,7 @@ export class ApRequestService {
 			{
 				method: req.request.method,
 				headers: req.request.headers,
-			}
+			},
 		);
 
 		return await res.json();
