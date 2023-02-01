@@ -156,16 +156,14 @@ export class InboxProcessorService {
 					return "skip: LD-SignatureのユーザーはpublicKeyを持っていませんでした";
 				}
 
-				// ==============
-				//  pub投稿が繋がらなくなるので一旦コメントアウト
-				// ==============
-
 				// LD-Signature検証
-				// const ldSignature = this.ldSignatureService.use();
-				// const verified = await ldSignature.verifyRsaSignature2017(activity, authUser.key.keyPem).catch(() => false);
-				// if (!verified) {
-				// 	return 'skip: LD-Signatureの検証に失敗しました';
-				// }
+				const ldSignature = this.ldSignatureService.use();
+				const verified = await ldSignature
+					.verifyRsaSignature2017(activity, authUser.key.keyPem)
+					.catch(() => false);
+				if (!verified) {
+					return "skip: LD-Signatureの検証に失敗しました";
+				}
 
 				// もう一度actorチェック
 				if (authUser.user.uri !== activity.actor) {
