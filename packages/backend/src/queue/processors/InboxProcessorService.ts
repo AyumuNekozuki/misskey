@@ -1,33 +1,36 @@
-import { URL } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import httpSignature from '@peertube/http-signature';
-import { DI } from '@/di-symbols.js';
-import type { InstancesRepository, DriveFilesRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { MetaService } from '@/core/MetaService.js';
-import { ApRequestService } from '@/core/activitypub/ApRequestService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { FetchInstanceMetadataService } from '@/core/FetchInstanceMetadataService.js';
-import { Cache } from '@/misc/cache.js';
-import type { Instance } from '@/models/entities/Instance.js';
-import InstanceChart from '@/core/chart/charts/instance.js';
-import ApRequestChart from '@/core/chart/charts/ap-request.js';
-import FederationChart from '@/core/chart/charts/federation.js';
-import { getApId } from '@/core/activitypub/type.js';
-import type { CacheableRemoteUser } from '@/models/entities/User.js';
-import type { UserPublickey } from '@/models/entities/UserPublickey.js';
-import { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { LdSignatureService } from '@/core/activitypub/LdSignatureService.js';
-import { ApInboxService } from '@/core/activitypub/ApInboxService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { DeliverJobData, InboxJobData } from '../types.js';
+import { URL } from "node:url";
+import { Inject, Injectable } from "@nestjs/common";
+import { MoreThan } from "typeorm";
+import httpSignature from "@peertube/http-signature";
+import { DI } from "@/di-symbols.js";
+import type {
+	InstancesRepository,
+	DriveFilesRepository,
+} from "@/models/index.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { MetaService } from "@/core/MetaService.js";
+import { ApRequestService } from "@/core/activitypub/ApRequestService.js";
+import { FederatedInstanceService } from "@/core/FederatedInstanceService.js";
+import { FetchInstanceMetadataService } from "@/core/FetchInstanceMetadataService.js";
+import { Cache } from "@/misc/cache.js";
+import type { Instance } from "@/models/entities/Instance.js";
+import InstanceChart from "@/core/chart/charts/instance.js";
+import ApRequestChart from "@/core/chart/charts/ap-request.js";
+import FederationChart from "@/core/chart/charts/federation.js";
+import { getApId } from "@/core/activitypub/type.js";
+import type { CacheableRemoteUser } from "@/models/entities/User.js";
+import type { UserPublickey } from "@/models/entities/UserPublickey.js";
+import { ApDbResolverService } from "@/core/activitypub/ApDbResolverService.js";
+import { StatusError } from "@/misc/status-error.js";
+import { UtilityService } from "@/core/UtilityService.js";
+import { ApPersonService } from "@/core/activitypub/models/ApPersonService.js";
+import { LdSignatureService } from "@/core/activitypub/LdSignatureService.js";
+import { ApInboxService } from "@/core/activitypub/ApInboxService.js";
+import { bindThis } from "@/decorators.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { DeliverJobData, InboxJobData } from "../types.js";
 
 // ユーザーのinboxにアクティビティが届いた時の処理
 @Injectable()
@@ -56,19 +59,19 @@ export class InboxProcessorService {
 		private instanceChart: InstanceChart,
 		private apRequestChart: ApRequestChart,
 		private federationChart: FederationChart,
-		private queueLoggerService: QueueLoggerService,
+		private queueLoggerService: QueueLoggerService
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('inbox');
+		this.logger = this.queueLoggerService.logger.createSubLogger("inbox");
 	}
 
 	@bindThis
 	public async process(job: Bull.Job<InboxJobData>): Promise<string> {
-		const signature = job.data.signature;	// HTTP-signature
+		const signature = job.data.signature; // HTTP-signature
 		const activity = job.data.activity;
 
 		//#region Log
 		const info = Object.assign({}, activity) as any;
-		delete info['@context'];
+		delete info["@context"];
 		this.logger.debug(JSON.stringify(info, null, 2));
 		//#endregion
 
@@ -81,22 +84,26 @@ export class InboxProcessorService {
 		}
 
 		const keyIdLower = signature.keyId.toLowerCase();
-		if (keyIdLower.startsWith('acct:')) {
+		if (keyIdLower.startsWith("acct:")) {
 			return `Old keyId is no longer supported. ${keyIdLower}`;
 		}
 
 		// HTTP-Signature keyIdを元にDBから取得
 		let authUser: {
-		user: CacheableRemoteUser;
-		key: UserPublickey | null;
-	} | null = await this.apDbResolverService.getAuthUserFromKeyId(signature.keyId);
+			user: CacheableRemoteUser;
+			key: UserPublickey | null;
+		} | null = await this.apDbResolverService.getAuthUserFromKeyId(
+			signature.keyId
+		);
 
 		// keyIdでわからなければ、activity.actorを元にDBから取得 || activity.actorを元にリモートから取得
 		if (authUser == null) {
 			try {
-				authUser = await this.apDbResolverService.getAuthUserFromApId(getApId(activity.actor));
+				authUser = await this.apDbResolverService.getAuthUserFromApId(
+					getApId(activity.actor)
+				);
 			} catch (err) {
-			// 対象が4xxならスキップ
+				// 対象が4xxならスキップ
 				if (err instanceof StatusError) {
 					if (err.isClientError) {
 						return `skip: Ignored deleted actors on both ends ${activity.actor} - ${err.statusCode}`;
@@ -108,47 +115,54 @@ export class InboxProcessorService {
 
 		// それでもわからなければ終了
 		if (authUser == null) {
-			return 'skip: failed to resolve user';
+			return "skip: failed to resolve user";
 		}
 
 		// publicKey がなくても終了
 		if (authUser.key == null) {
-			return 'skip: failed to resolve user publicKey';
+			return "skip: failed to resolve user publicKey";
 		}
 
 		// HTTP-Signatureの検証
-		const httpSignatureValidated = httpSignature.verifySignature(signature, authUser.key.keyPem);
+		const httpSignatureValidated = httpSignature.verifySignature(
+			signature,
+			authUser.key.keyPem
+		);
 
 		// また、signatureのsignerは、activity.actorと一致する必要がある
 		if (!httpSignatureValidated || authUser.user.uri !== activity.actor) {
-		// 一致しなくても、でもLD-Signatureがありそうならそっちも見る
+			// 一致しなくても、でもLD-Signatureがありそうならそっちも見る
 			if (activity.signature) {
-				if (activity.signature.type !== 'RsaSignature2017') {
+				if (activity.signature.type !== "RsaSignature2017") {
 					return `skip: unsupported LD-signature type ${activity.signature.type}`;
 				}
 
 				// activity.signature.creator: https://example.oom/users/user#main-key
 				// みたいになっててUserを引っ張れば公開キーも入ることを期待する
 				if (activity.signature.creator) {
-					const candicate = activity.signature.creator.replace(/#.*/, '');
+					const candicate = activity.signature.creator.replace(/#.*/, "");
 					await this.apPersonService.resolvePerson(candicate).catch(() => null);
 				}
 
 				// keyIdからLD-Signatureのユーザーを取得
-				authUser = await this.apDbResolverService.getAuthUserFromKeyId(activity.signature.creator);
+				authUser = await this.apDbResolverService.getAuthUserFromKeyId(
+					activity.signature.creator
+				);
 				if (authUser == null) {
-					return 'skip: LD-Signatureのユーザーが取得できませんでした';
+					return "skip: LD-Signatureのユーザーが取得できませんでした";
 				}
 
 				if (authUser.key == null) {
-					return 'skip: LD-SignatureのユーザーはpublicKeyを持っていませんでした';
+					return "skip: LD-SignatureのユーザーはpublicKeyを持っていませんでした";
 				}
 
 				// LD-Signature検証
 				const ldSignature = this.ldSignatureService.use();
-				const verified = await ldSignature.verifyRsaSignature2017(activity, authUser.key.keyPem).catch(() => false);
+				const verified = await ldSignature
+					.verifyRsaSignature2017(activity, authUser.key.keyPem)
+					.catch(() => false);
 				if (!verified) {
-					return 'skip: LD-Signatureの検証に失敗しました';
+					return "skip: LD-Signatureの検証に失敗しました";
 				}
 
 				// もう一度actorチェック
@@ -167,7 +181,7 @@ export class InboxProcessorService {
 		}
 
 		// activity.idがあればホストが署名者のホストであることを確認する
-		if (typeof activity.id === 'string') {
+		if (typeof activity.id === "string") {
 			const signerHost = this.utilityService.extractDbHost(authUser.user.uri!);
 			const activityIdHost = this.utilityService.extractDbHost(activity.id);
 			if (signerHost !== activityIdHost) {
@@ -176,7 +190,7 @@ export class InboxProcessorService {
 		}
 
 		// Update stats
-		this.federatedInstanceService.fetch(authUser.user.host).then(i => {
+		this.federatedInstanceService.fetch(authUser.user.host).then((i) => {
 			this.instancesRepository.update(i.id, {
 				latestRequestReceivedAt: new Date(),
 				isNotResponding: false,
@@ -194,6 +208,6 @@ export class InboxProcessorService {
 
 		// アクティビティを処理
 		await this.apInboxService.performActivity(authUser.user, activity);
-		return 'ok';
+		return "ok";
 	}
 }
