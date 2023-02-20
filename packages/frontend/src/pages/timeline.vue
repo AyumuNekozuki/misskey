@@ -166,21 +166,6 @@ const headerTabsWhenNotLogin = $computed(() => [
 		icon: 'ti ti-whirl',
 		iconOnly: true,
 	}] : []),
-] as Tab[]);
-
-const headerTabsWhenNotLogin = $computed(() => [
-	...(isLocalTimelineAvailable ? [{
-		key: 'local',
-		title: i18n.ts._timelines.local,
-		icon: 'ti ti-planet',
-		iconOnly: true,
-	}] : []),
-	...(isGlobalTimelineAvailable ? [{
-		key: 'global',
-		title: i18n.ts._timelines.global,
-		icon: 'ti ti-whirl',
-		iconOnly: true,
-	}] : []),
 ]);
 
 definePageMetadata(computed(() => ({
