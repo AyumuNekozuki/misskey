@@ -46,7 +46,8 @@ if (props.id) {
 	data = {
 		name: 'New Role',
 		description: '',
-		rolePermission: 'normal',
+		isAdministrator: false,
+		isModerator: false,
 		color: null,
 		iconUrl: null,
 		target: 'manual',
@@ -54,6 +55,7 @@ if (props.id) {
 		isPublic: false,
 		asBadge: false,
 		canEditMembersByModerator: false,
+		displayOrder: 0,
 		policies: {},
 	};
 }

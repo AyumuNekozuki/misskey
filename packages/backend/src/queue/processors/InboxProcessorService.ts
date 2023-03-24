@@ -1,30 +1,33 @@
-import { URL } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import httpSignature from '@peertube/http-signature';
-import { DI } from '@/di-symbols.js';
-import type { InstancesRepository, DriveFilesRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { MetaService } from '@/core/MetaService.js';
-import { ApRequestService } from '@/core/activitypub/ApRequestService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { FetchInstanceMetadataService } from '@/core/FetchInstanceMetadataService.js';
-import InstanceChart from '@/core/chart/charts/instance.js';
-import ApRequestChart from '@/core/chart/charts/ap-request.js';
-import FederationChart from '@/core/chart/charts/federation.js';
-import { getApId } from '@/core/activitypub/type.js';
-import type { RemoteUser } from '@/models/entities/User.js';
-import type { UserPublickey } from '@/models/entities/UserPublickey.js';
-import { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { LdSignatureService } from '@/core/activitypub/LdSignatureService.js';
-import { ApInboxService } from '@/core/activitypub/ApInboxService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { InboxJobData } from '../types.js';
+import { URL } from "node:url";
+import { Inject, Injectable } from "@nestjs/common";
+import httpSignature from "@peertube/http-signature";
+import { DI } from "@/di-symbols.js";
+import type {
+	InstancesRepository,
+	DriveFilesRepository,
+} from "@/models/index.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { MetaService } from "@/core/MetaService.js";
+import { ApRequestService } from "@/core/activitypub/ApRequestService.js";
+import { FederatedInstanceService } from "@/core/FederatedInstanceService.js";
+import { FetchInstanceMetadataService } from "@/core/FetchInstanceMetadataService.js";
+import InstanceChart from "@/core/chart/charts/instance.js";
+import ApRequestChart from "@/core/chart/charts/ap-request.js";
+import FederationChart from "@/core/chart/charts/federation.js";
+import { getApId } from "@/core/activitypub/type.js";
+import type { RemoteUser } from "@/models/entities/User.js";
+import type { UserPublickey } from "@/models/entities/UserPublickey.js";
+import { ApDbResolverService } from "@/core/activitypub/ApDbResolverService.js";
+import { StatusError } from "@/misc/status-error.js";
+import { UtilityService } from "@/core/UtilityService.js";
+import { ApPersonService } from "@/core/activitypub/models/ApPersonService.js";
+import { LdSignatureService } from "@/core/activitypub/LdSignatureService.js";
+import { ApInboxService } from "@/core/activitypub/ApInboxService.js";
+import { bindThis } from "@/decorators.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { InboxJobData } from "../types.js";
 
 // ユーザーのinboxにアクティビティが届いた時の処理
 @Injectable()
@@ -64,7 +67,7 @@ export class InboxProcessorService {
 		const activity = job.data.activity;
 
 		//#region Log
-		const info = Object.assign({}, activity) as any;
+		const info = Object.assign({}, activity);
 		delete info["@context"];
 		this.logger.debug(JSON.stringify(info, null, 2));
 		//#endregion
@@ -84,9 +87,11 @@ export class InboxProcessorService {
 
 		// HTTP-Signature keyIdを元にDBから取得
 		let authUser: {
-		user: RemoteUser;
-		key: UserPublickey | null;
-	} | null = await this.apDbResolverService.getAuthUserFromKeyId(signature.keyId);
+			user: RemoteUser;
+			key: UserPublickey | null;
+		} | null = await this.apDbResolverService.getAuthUserFromKeyId(
+			signature.keyId
+		);
 
 		// keyIdでわからなければ、activity.actorを元にDBから取得 || activity.actorを元にリモートから取得
 		if (authUser == null) {
