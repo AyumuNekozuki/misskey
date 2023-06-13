@@ -2,7 +2,7 @@
 <MkLoading v-if="!loaded"/>
 <Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" appear>
 	<div v-show="loaded" class="mjndxjch">
-		<img src="https://files.mi.nekozuki.me/mashiro/mashiro_bg_c_256.png" class="_ghost"/>
+		<img src="https://misskey-white.s3.ap-northeast-1.amazonaws.com/mashiro/mashiro_bg_c_256.png" class="_ghost"/>
 		<p><b><i class="ti ti-alert-triangle"></i> {{ i18n.ts.pageLoadError }}</b></p>
 		<p v-if="meta && (version === meta.version)">{{ i18n.ts.pageLoadErrorDescription }}</p>
 		<p v-else-if="serverIsDead">{{ i18n.ts.serverIsDead }}</p>

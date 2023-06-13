@@ -2,7 +2,7 @@
 <MkPagination :pagination="pagination">
 	<template #empty>
 		<div class="_fullinfo">
-			<img src="https://files.mi.nekozuki.me/mashiro/mashiro_bg_256.png" class="_ghost"/>
+			<img src="https://misskey-white.s3.ap-northeast-1.amazonaws.com/mashiro/mashiro_bg_256.png" class="_ghost"/>
 			<div>{{ i18n.ts.noUsers }}</div>
 		</div>
 	</template>
