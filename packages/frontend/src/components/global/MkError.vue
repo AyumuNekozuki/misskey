@@ -1,7 +1,7 @@
 <template>
 <Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" appear>
 	<div :class="$style.root">
-		<img :class="$style.img" src="https://xn--931a.moe/assets/error.jpg" class="_ghost"/>
+		<img :class="$style.img" src="https://misskey-white.s3.ap-northeast-1.amazonaws.com/mashiro/mashiro_bg_c_256.png" class="_ghost"/>
 		<p :class="$style.text"><i class="ti ti-alert-triangle"></i> {{ i18n.ts.somethingHappened }}</p>
 		<MkButton :class="$style.button" @click="() => emit('retry')">{{ i18n.ts.retry }}</MkButton>
 	</div>

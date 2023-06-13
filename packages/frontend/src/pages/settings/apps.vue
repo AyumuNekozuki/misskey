@@ -3,7 +3,7 @@
 	<FormPagination ref="list" :pagination="pagination">
 		<template #empty>
 			<div class="_fullinfo">
-				<img src="https://xn--931a.moe/assets/info.jpg" class="_ghost"/>
+				<img src="https://misskey-white.s3.ap-northeast-1.amazonaws.com/mashiro/mashiro_bg_256.png" class="_ghost"/>
 				<div>{{ i18n.ts.nothing }}</div>
 			</div>
 		</template>
