@@ -3,7 +3,7 @@
 	<FormPagination ref="list" :pagination="pagination">
 		<template #empty>
 			<div class="_fullinfo">
-				<img src="https://misskey-white.s3.ap-northeast-1.amazonaws.com/mashiro/mashiro_bg_256.png" class="_ghost"/>
+				<img :src="infoImageUrl" class="_ghost"/>
 				<div>{{ i18n.ts.nothing }}</div>
 			</div>
 		</template>
@@ -47,6 +47,7 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkButton from '@/components/MkButton.vue';
+import { infoImageUrl } from '@/instance';
 
 const list = ref<any>(null);
 
