@@ -628,6 +628,86 @@ Meilisearchの設定に`index`が必要になりました。値はMisskeyサー�
 ### Improvements
 - ロールで広告の非表示が有効になっている場合は最初から広告を非表示にするように
 
+## 13.5.3 (2023/02/09)
+
+### Improvements
+- Client: デッキにチャンネルカラムを追加
+
+## 13.5.2 (2023/02/08)
+
+### Changes
+- Revert: perf(client): do not render custom emojis in user names
+
+### Bugfixes
+- Client: register_note_view_interruptor not working
+- Client: ログイントークンの再生成が出来ない
+
+## 13.5.0 (2023/02/08)
+
+### Changes
+- perf(client): do not render custom emojis in user names
+
+### Improvements
+- Client: disableShowingAnimatedImagesのデフォルト値をprefers-reduced-motionにする
+- enhance(client): tweak medialist style
+
+### Bugfixes
+- fix docker health check
+- Client: MkEmojiPickerでもChromeで検索ダイアログで変換確定するとそのまま検索されてしまうのを修正
+- fix(mfm): default degree not used in rotate
+- fix(server): validate urls from ap to improve security
+
+## 13.4.0 (2023/02/05)
+
+### Improvements
+- ロールにアイコンを設定してユーザー名の横に表示できるように
+- feat: timeline page for non-login users
+- 実績の単なるラッキーの獲得確立を調整
+- Add Thai language support
+
+### Bugfixes
+- fix(server): 自分のノートをお気に入りに登録しても実績解除される問題を修正
+- fix(server): clean up file in FileServer
+- fix(server): Deny UNIX domain socket
+- fix(server): validate filename and emoji name to improve security
+- fix(client): validate input response in aiscript
+- fix(client): add webhook delete button
+- fix(client): tweak notification style
+- fix(client): インラインコードを折り返して表示する
+
+## 13.3.3 (2023/02/04)
+
+### Bugfixes
+- Server: improve security
+
+## 13.3.2 (2023/02/04)
+
+### Improvements
+- 外部メディアプロキシへの対応を強化しました  
+  外部メディアプロキシのFastify実装を作りました  
+  https://github.com/misskey-dev/media-proxy
+- Server: improve performance
+
+### Bugfixes
+- Client: validate urls to improve security
+
+## 13.3.1 (2023/02/04)
+
+### Bugfixes
+- Client: カスタム絵文字にアニメーション画像を再生しない設定が適用されていない問題を修正
+- Client: オートコンプリートでUnicode絵文字がカスタム絵文字として表示されてしまうのを修正
+- Client: Fix Vue-plyr CORS issue
+- Client: validate urls to improve security
+
+## 13.3.0 (2023/02/03)
+### Changes
+- twitter/github/discord連携機能が削除されました
+- ハッシュタグごとのチャートが削除されました
+- syslogのサポートが削除されました
+
+### Improvements
+- ロールで広告の非表示が有効になっている場合は最初から広告を非表示にするように
+
 ## 13.2.6 (2023/02/01)
 ### Changes
 - docker-compose.ymlをdocker-compose.yml.exampleにしました。docker-compose.ymlとしてコピーしてから使用してください。

@@ -45,19 +45,19 @@ export class InboxProcessorService {
 		private instanceChart: InstanceChart,
 		private apRequestChart: ApRequestChart,
 		private federationChart: FederationChart,
-		private queueLoggerService: QueueLoggerService,
+		private queueLoggerService: QueueLoggerService
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('inbox');
+		this.logger = this.queueLoggerService.logger.createSubLogger("inbox");
 	}
 
 	@bindThis
 	public async process(job: Bull.Job<InboxJobData>): Promise<string> {
-		const signature = job.data.signature;	// HTTP-signature
+		const signature = job.data.signature; // HTTP-signature
 		const activity = job.data.activity;
 
 		//#region Log
 		const info = Object.assign({}, activity);
-		delete info['@context'];
+		delete info["@context"];
 		this.logger.debug(JSON.stringify(info, null, 2));
 		//#endregion
 
@@ -70,7 +70,7 @@ export class InboxProcessorService {
 		}
 
 		const keyIdLower = signature.keyId.toLowerCase();
-		if (keyIdLower.startsWith('acct:')) {
+		if (keyIdLower.startsWith("acct:")) {
 			return `Old keyId is no longer supported. ${keyIdLower}`;
 		}
 
@@ -83,7 +83,9 @@ export class InboxProcessorService {
 		// keyIdでわからなければ、activity.actorを元にDBから取得 || activity.actorを元にリモートから取得
 		if (authUser == null) {
 			try {
-				authUser = await this.apDbResolverService.getAuthUserFromApId(getApId(activity.actor));
+				authUser = await this.apDbResolverService.getAuthUserFromApId(
+					getApId(activity.actor)
+				);
 			} catch (err) {
 				// 対象が4xxならスキップ
 				if (err instanceof StatusError) {
@@ -106,7 +108,10 @@ export class InboxProcessorService {
 		}
 
 		// HTTP-Signatureの検証
-		const httpSignatureValidated = httpSignature.verifySignature(signature, authUser.key.keyPem);
+		const httpSignatureValidated = httpSignature.verifySignature(
+			signature,
+			authUser.key.keyPem
+		);
 
 		// また、signatureのsignerは、activity.actorと一致する必要がある
 		if (!httpSignatureValidated || authUser.user.uri !== activity.actor) {
@@ -119,12 +124,14 @@ export class InboxProcessorService {
 				// activity.signature.creator: https://example.oom/users/user#main-key
 				// みたいになっててUserを引っ張れば公開キーも入ることを期待する
 				if (activity.signature.creator) {
-					const candicate = activity.signature.creator.replace(/#.*/, '');
+					const candicate = activity.signature.creator.replace(/#.*/, "");
 					await this.apPersonService.resolvePerson(candicate).catch(() => null);
 				}
 
 				// keyIdからLD-Signatureのユーザーを取得
-				authUser = await this.apDbResolverService.getAuthUserFromKeyId(activity.signature.creator);
+				authUser = await this.apDbResolverService.getAuthUserFromKeyId(
+					activity.signature.creator
+				);
 				if (authUser == null) {
 					throw new Bull.UnrecoverableError('skip: LD-Signatureのユーザーが取得できませんでした');
 				}
@@ -135,7 +142,9 @@ export class InboxProcessorService {
 
 				// LD-Signature検証
 				const ldSignature = this.ldSignatureService.use();
-				const verified = await ldSignature.verifyRsaSignature2017(activity, authUser.key.keyPem).catch(() => false);
+				const verified = await ldSignature
+					.verifyRsaSignature2017(activity, authUser.key.keyPem)
+					.catch(() => false);
 				if (!verified) {
 					throw new Bull.UnrecoverableError('skip: LD-Signatureの検証に失敗しました');
 				}
@@ -156,7 +165,7 @@ export class InboxProcessorService {
 		}
 
 		// activity.idがあればホストが署名者のホストであることを確認する
-		if (typeof activity.id === 'string') {
+		if (typeof activity.id === "string") {
 			const signerHost = this.utilityService.extractDbHost(authUser.user.uri!);
 			const activityIdHost = this.utilityService.extractDbHost(activity.id);
 			if (signerHost !== activityIdHost) {
@@ -183,6 +192,6 @@ export class InboxProcessorService {
 
 		// アクティビティを処理
 		await this.apInboxService.performActivity(authUser.user, activity);
-		return 'ok';
+		return "ok";
 	}
 }
