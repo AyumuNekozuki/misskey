@@ -68,7 +68,7 @@ os.apiGet('federation/instances', {
 		position: fixed;
 		top: 0;
 		right: 0;
-		width: 80vw; // 100%からshapeの幅を引いている
+		width: 85vw; // 100%からshapeの幅を引いている
 		height: 100vh;
 	}
 
@@ -79,7 +79,7 @@ os.apiGet('federation/instances', {
 		right: 64px;
 		margin: auto;
 		padding: 128px 0;
-		width: 500px;
+		width: 300px;
 		height: calc(100% - 256px);
 		overflow: hidden;
 		-webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 128px, rgba(0,0,0,1) calc(100% - 128px), rgba(0,0,0,0) 100%);

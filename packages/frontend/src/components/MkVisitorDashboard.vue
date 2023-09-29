@@ -19,7 +19,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div v-html="meta.description || i18n.ts.headlineMisskey"></div>
 			</div>
 			<div v-if="instance.disableRegistration" :class="$style.mainWarn">
-				<MkInfo warn>{{ i18n.ts.invitationRequiredToRegister }}</MkInfo>
+				<MkInfo warn><br />
+					現在、このサーバーは招待制です。<br />
+					登録には招待コードが必要です。<br />
+					<br />
+					招待コードはすでに登録済みのご友人から受け取るか、<br />
+					<MkLink target="_blank" url="https://mi-mashiro-site.notion.site/fa6a351d51c94223b9f394000cbe3fa8?pvs=4">こちら</MkLink>から使えるコードを探して利用してください。
+					<!-- {{ i18n.ts.invitationRequiredToRegister }} -->
+				</MkInfo>
 			</div>
 			<div class="_gaps_s" :class="$style.mainActions">
 				<MkButton :class="$style.mainAction" full rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.joinThisServer }}</MkButton>
@@ -54,6 +61,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { } from 'vue';
 import * as Misskey from 'misskey-js';
 import XTimeline from './welcome.timeline.vue';
+import MkLink from '@/components/MkLink.vue';
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import XSignupDialog from '@/components/MkSignupDialog.vue';
 import MkButton from '@/components/MkButton.vue';
