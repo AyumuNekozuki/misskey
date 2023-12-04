@@ -98,7 +98,13 @@ export function openInstanceMenu(ev: MouseEvent) {
 			window.open(instance.privacyPolicyUrl, '_blank');
 		},
 	} : undefined, (!instance.impressumUrl && !instance.tosUrl && !instance.privacyPolicyUrl) ? undefined : null, {
-		text: i18n.ts.help,
+		text: "みすほわいと ヘルプ",
+		icon: 'ti ti-help-circle',
+		action: () => {
+			window.open('https://mi-mashiro-site.notion.site/mi-mashiro-site/de158e06de974157893a4790472e2f1e', '_blank');
+		},
+	}, {
+		text: `Misskey ${i18n.ts.help}`,
 		icon: 'ti ti-help-circle',
 		action: () => {
 			window.open('https://misskey-hub.net/help.html', '_blank');
