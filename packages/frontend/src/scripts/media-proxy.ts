@@ -16,7 +16,7 @@ export function getProxiedImageUrl(imageUrl: string, type?: 'preview' | 'emoji' 
 	}
 
 	// みすほわ独自: 動画であればproxyさせない
-	if(imageUrl.endsWith('.mp4') || imageUrl.endsWith('.mov') || imageUrl.endsWith('.m4v') || imageUrl.endsWith('.3gp')){
+	if (imageUrl.endsWith('.mp4') || imageUrl.endsWith('.mov') || imageUrl.endsWith('.m4v') || imageUrl.endsWith('.3gp')) {
 		return imageUrl;
 	}
 
