@@ -15,6 +15,11 @@ export function getProxiedImageUrl(imageUrl: string, type?: 'preview' | 'emoji' 
 		imageUrl = (new URL(imageUrl)).searchParams.get('url') ?? imageUrl;
 	}
 
+	// みすほわ独自: 動画であればproxyさせない
+	if (imageUrl.endsWith('.mp4') || imageUrl.endsWith('.mov') || imageUrl.endsWith('.m4v') || imageUrl.endsWith('.3gp')) {
+		return imageUrl;
+	}
+
 	return `${mustOrigin ? localProxy : instance.mediaProxy}/${
 		type === 'preview' ? 'preview.webp'
 		: 'image.webp'

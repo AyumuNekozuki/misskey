@@ -335,7 +335,7 @@ const headerTabsWhenNotLogin = computed(() => [
 		icon: 'ti ti-whirl',
 		iconOnly: true,
 	}] : []),
-] as Tab[]);
+]);
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.timeline,

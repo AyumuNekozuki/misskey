@@ -18,35 +18,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 					</div>
 				</div>
 
-				<MkKeyValue>
-					<template #key>{{ i18n.ts.description }}</template>
-					<template #value><div v-html="instance.description"></div></template>
-				</MkKeyValue>
+			  <MkKeyValue>
+				  <template #key>{{ i18n.ts.description }}</template>
+				  <template #value><div v-html="instance.description"></div></template>
+			  </MkKeyValue>
 
-				<FormSection>
-					<div class="_gaps_m">
-						<MkKeyValue :copy="version">
-							<template #key>Misskey</template>
-							<template #value>{{ version }}</template>
-						</MkKeyValue>
-						<div v-html="i18n.tsx.poweredByMisskeyDescription({ name: instance.name ?? host })">
-						</div>
-						<FormLink to="/about-misskey">{{ i18n.ts.aboutMisskey }}</FormLink>
-					</div>
-				</FormSection>
+        <FormSection>
+          <div class="_gaps_m">
+            <div v-html="i18n.t('poweredByMisskeyDescription', { name: instance.name ?? host })">
+            </div>
+            <FormLink to="/about-misskey">{{ i18n.ts.aboutMisskey }}</FormLink>
+          </div>
+        </FormSection>
 
-				<FormSection>
-					<div class="_gaps_m">
-						<FormSplit>
-							<MkKeyValue>
-								<template #key>{{ i18n.ts.administrator }}</template>
-								<template #value>{{ instance.maintainerName }}</template>
-							</MkKeyValue>
-							<MkKeyValue>
-								<template #key>{{ i18n.ts.contact }}</template>
-								<template #value>{{ instance.maintainerEmail }}</template>
-							</MkKeyValue>
-						</FormSplit>
+        <FormSection>
+          <div class="_gaps_m">
+            <MkKeyValue :copy="version">
+              <template #key>みすほわいと</template>
+              <template #value>v{{ version }}</template>
+            </MkKeyValue>
+            <FormLink to="https://github.com/AyumuNekozuki/misskey" external>
+                <template #icon><i class="ti ti-code"></i></template>
+                {{ i18n.ts._aboutMisskey.source }}
+                <template #suffix>GitHub</template>
+            </FormLink>
+            <FormLink to="https://www.patreon.com/AyumuNekozuki" external>
+              <template #icon><i class="ti ti-pig-money"></i></template>
+              サーバー代支援
+              <template #suffix>Patreon</template>
+            </FormLink>
+          </div>
+        </FormSection>
+
+        <FormSection>
+          <div class="_gaps_m">
+            <FormSplit>
+              <MkKeyValue>
+                <template #key>{{ i18n.ts.administrator }}</template>
+                <template #value>{{ instance.maintainerName }}</template>
+              </MkKeyValue>
+              <MkKeyValue>
+                <template #key>{{ i18n.ts.contact }}</template>
+                <template #value>{{ instance.maintainerEmail }}</template>
+              </MkKeyValue>
+            </FormSplit>
 						<FormLink v-if="instance.impressumUrl" :to="instance.impressumUrl" external>{{ i18n.ts.impressum }}</FormLink>
 						<div class="_gaps_s">
 							<MkFolder v-if="instance.serverRules.length > 0">
