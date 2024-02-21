@@ -101,7 +101,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<FormLink :to="`/.well-known/nodeinfo`" external>nodeinfo</FormLink>
 						<FormLink :to="`/robots.txt`" external>robots.txt</FormLink>
 						<FormLink :to="`/manifest.json`" external>manifest.json</FormLink>
-						<FormLink :to="`/tarball/misskey-${version}.tar.gz`" external>source code</FormLink>
 					</div>
 				</FormSection>
 			</div>
@@ -131,6 +130,7 @@ import FormSuspense from '@/components/form/suspense.vue';
 import FormSplit from '@/components/form/split.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
+import MkInfo from '@/components/MkInfo.vue';
 import MkInstanceStats from '@/components/MkInstanceStats.vue';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 import { misskeyApi } from '@/scripts/misskey-api.js';
@@ -179,10 +179,10 @@ const headerTabs = computed(() => [{
 	icon: 'ti ti-chart-line',
 }]);
 
-definePageMetadata(computed(() => ({
+definePageMetadata(() => ({
 	title: i18n.ts.instanceInfo,
 	icon: 'ti ti-info-circle',
-})));
+}));
 </script>
 
 <style lang="scss" module>
