@@ -456,9 +456,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			this.hashtagService.updateUsertags(user, tags);
 			//#endregion
 
-			if (Object.keys(updates).length > 0) await this.usersRepository.update(user.id, updates);
-			if (Object.keys(updates).includes('alsoKnownAs')) {
-				this.cacheService.uriPersonCache.set(this.userEntityService.genLocalUserUri(user.id), { ...user, ...updates });
+			if (Object.keys(updates).length > 0) {
+				await this.usersRepository.update(user.id, updates);
+				this.globalEventService.publishInternalEvent('localUserUpdated', { id: user.id });
 			}
 
 			await this.userProfilesRepository.update(user.id, {
@@ -498,26 +498,32 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	private async verifyLink(url: string, user: MiLocalUser) {
 		if (!safeForSql(url)) return;
 
-		const html = await this.httpRequestService.getHtml(url);
+		try {
+			const html = await this.httpRequestService.getHtml(url);
 
-		const { window } = new JSDOM(html);
-		const doc = window.document;
+			const { window } = new JSDOM(html);
+			const doc = window.document;
 
-		const myLink = `${this.config.url}/@${user.username}`;
+			const myLink = `${this.config.url}/@${user.username}`;
 
-		const aEls = Array.from(doc.getElementsByTagName('a'));
-		const linkEls = Array.from(doc.getElementsByTagName('link'));
+			const aEls = Array.from(doc.getElementsByTagName('a'));
+			const linkEls = Array.from(doc.getElementsByTagName('link'));
 
-		const includesMyLink = aEls.some(a => a.href === myLink);
-		const includesRelMeLinks = [...aEls, ...linkEls].some(link => link.rel === 'me' && link.href === myLink);
+			const includesMyLink = aEls.some(a => a.href === myLink);
+			const includesRelMeLinks = [...aEls, ...linkEls].some(link => link.rel === 'me' && link.href === myLink);
 
-		if (includesMyLink || includesRelMeLinks) {
-			await this.userProfilesRepository.createQueryBuilder('profile').update()
-				.where('userId = :userId', { userId: user.id })
-				.set({
-					verifiedLinks: () => `array_append("verifiedLinks", '${url}')`, // ここでSQLインジェクションされそうなのでとりあえず safeForSql で弾いている
-				})
-				.execute();
+			if (includesMyLink || includesRelMeLinks) {
+				await this.userProfilesRepository.createQueryBuilder('profile').update()
+					.where('userId = :userId', { userId: user.id })
+					.set({
+						verifiedLinks: () => `array_append("verifiedLinks", '${url}')`, // ここでSQLインジェクションされそうなのでとりあえず safeForSql で弾いている
+					})
+					.execute();
+			}
+
+			window.close();
+		} catch (err) {
+			// なにもしない
 		}
 	}
 }

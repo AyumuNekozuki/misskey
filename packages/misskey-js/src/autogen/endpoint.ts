@@ -35,6 +35,7 @@ import type {
 	AdminDriveShowFileResponse,
 	AdminEmojiAddAliasesBulkRequest,
 	AdminEmojiAddRequest,
+	AdminEmojiAddResponse,
 	AdminEmojiCopyRequest,
 	AdminEmojiCopyResponse,
 	AdminEmojiDeleteBulkRequest,
@@ -100,6 +101,8 @@ import type {
 	AdminRolesUsersResponse,
 	AnnouncementsRequest,
 	AnnouncementsResponse,
+	AnnouncementsShowRequest,
+	AnnouncementsShowResponse,
 	AntennasCreateRequest,
 	AntennasCreateResponse,
 	AntennasDeleteRequest,
@@ -578,7 +581,7 @@ export type Endpoints = {
 	'admin/drive/files': { req: AdminDriveFilesRequest; res: AdminDriveFilesResponse };
 	'admin/drive/show-file': { req: AdminDriveShowFileRequest; res: AdminDriveShowFileResponse };
 	'admin/emoji/add-aliases-bulk': { req: AdminEmojiAddAliasesBulkRequest; res: EmptyResponse };
-	'admin/emoji/add': { req: AdminEmojiAddRequest; res: EmptyResponse };
+	'admin/emoji/add': { req: AdminEmojiAddRequest; res: AdminEmojiAddResponse };
 	'admin/emoji/copy': { req: AdminEmojiCopyRequest; res: AdminEmojiCopyResponse };
 	'admin/emoji/delete-bulk': { req: AdminEmojiDeleteBulkRequest; res: EmptyResponse };
 	'admin/emoji/delete': { req: AdminEmojiDeleteRequest; res: EmptyResponse };
@@ -630,6 +633,7 @@ export type Endpoints = {
 	'admin/roles/update-default-policies': { req: AdminRolesUpdateDefaultPoliciesRequest; res: EmptyResponse };
 	'admin/roles/users': { req: AdminRolesUsersRequest; res: AdminRolesUsersResponse };
 	'announcements': { req: AnnouncementsRequest; res: AnnouncementsResponse };
+	'announcements/show': { req: AnnouncementsShowRequest; res: AnnouncementsShowResponse };
 	'antennas/create': { req: AntennasCreateRequest; res: AntennasCreateResponse };
 	'antennas/delete': { req: AntennasDeleteRequest; res: EmptyResponse };
 	'antennas/list': { req: EmptyRequest; res: AntennasListResponse };
@@ -840,6 +844,7 @@ export type Endpoints = {
 	'notes/unrenote': { req: NotesUnrenoteRequest; res: EmptyResponse };
 	'notes/user-list-timeline': { req: NotesUserListTimelineRequest; res: NotesUserListTimelineResponse };
 	'notifications/create': { req: NotificationsCreateRequest; res: EmptyResponse };
+	'notifications/flush': { req: EmptyRequest; res: EmptyResponse };
 	'notifications/mark-all-as-read': { req: EmptyRequest; res: EmptyResponse };
 	'notifications/test-notification': { req: EmptyRequest; res: EmptyResponse };
 	'page-push': { req: PagePushRequest; res: EmptyResponse };
