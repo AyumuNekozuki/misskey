@@ -19,13 +19,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div v-html="instance.description || i18n.ts.headlineMisskey"></div>
 			</div>
 			<div v-if="instance.disableRegistration" :class="$style.mainWarn">
-				<MkInfo warn><br />
-					現在、このサーバーは招待制です。<br />
-					登録には招待コードが必要です。<br />
-					<br />
-					招待コードはすでに登録済みのご友人から受け取るか、<br />
-					<MkLink target="_blank" url="https://mi-mashiro-site.notion.site/fa6a351d51c94223b9f394000cbe3fa8?pvs=4">こちら</MkLink>から使えるコードを探して利用してください。
-					<!-- {{ i18n.ts.invitationRequiredToRegister }} -->
+				<MkInfo warn>
+					{{ i18n.ts.invitationRequiredToRegister }}
 				</MkInfo>
 			</div>
 			<div class="_gaps_s" :class="$style.mainActions">
