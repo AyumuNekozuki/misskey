@@ -25,7 +25,7 @@ Error.stackTraceLimit = Infinity;
 EventEmitter.defaultMaxListeners = 128;
 
 const logger = new Logger('core', 'cyan');
-const clusterLogger = logger.createSubLogger('cluster', 'orange', false);
+const clusterLogger = logger.createSubLogger('cluster', 'orange');
 const ev = new Xev();
 
 //#region Events
@@ -68,16 +68,22 @@ process.on('exit', code => {
 
 //#endregion
 
-if (cluster.isPrimary || envOption.disableClustering) {
-	await masterMain();
-
+if (!envOption.disableClustering) {
 	if (cluster.isPrimary) {
+		logger.info(`Start main process... pid: ${process.pid}`);
+		await masterMain();
 		ev.mount();
+	} else if (cluster.isWorker) {
+		logger.info(`Start worker process... pid: ${process.pid}`);
+		await workerMain();
+	} else {
+		throw new Error('Unknown process type');
 	}
-}
-
-if (cluster.isWorker || envOption.disableClustering) {
-	await workerMain();
+} else {
+	// 非clusterの場合はMasterのみが起動するため、Workerの処理は行わない(cluster.isWorker === trueの状態でこのブロックに来ることはない)
+	logger.info(`Start main process... pid: ${process.pid}`);
+	await masterMain();
+	ev.mount();
 }
 
 readyRef.value = true;
