@@ -56,7 +56,7 @@ export class InboxProcessorService implements OnApplicationShutdown {
 		private instanceChart: InstanceChart,
 		private apRequestChart: ApRequestChart,
 		private federationChart: FederationChart,
-		private queueLoggerService: QueueLoggerService,
+		private queueLoggerService: QueueLoggerService
 	) {
 		this.logger = this.queueLoggerService.logger.createSubLogger('inbox');
 		this.updateInstanceQueue = new CollapsedQueue(process.env.NODE_ENV !== 'test' ? 60 * 1000 * 5 : 0, this.collapseUpdateInstanceJobs, this.performUpdateInstance);
@@ -69,7 +69,7 @@ export class InboxProcessorService implements OnApplicationShutdown {
 
 		//#region Log
 		const info = Object.assign({}, activity);
-		delete info['@context'];
+		delete info["@context"];
 		this.logger.debug(JSON.stringify(info, null, 2));
 		//#endregion
 
@@ -80,7 +80,7 @@ export class InboxProcessorService implements OnApplicationShutdown {
 		}
 
 		const keyIdLower = signature.keyId.toLowerCase();
-		if (keyIdLower.startsWith('acct:')) {
+		if (keyIdLower.startsWith("acct:")) {
 			return `Old keyId is no longer supported. ${keyIdLower}`;
 		}
 
@@ -93,7 +93,9 @@ export class InboxProcessorService implements OnApplicationShutdown {
 		// keyIdでわからなければ、activity.actorを元にDBから取得 || activity.actorを元にリモートから取得
 		if (authUser == null) {
 			try {
-				authUser = await this.apDbResolverService.getAuthUserFromApId(getApId(activity.actor));
+				authUser = await this.apDbResolverService.getAuthUserFromApId(
+					getApId(activity.actor)
+				);
 			} catch (err) {
 				// 対象が4xxならスキップ
 				if (err instanceof StatusError) {
@@ -116,7 +118,10 @@ export class InboxProcessorService implements OnApplicationShutdown {
 		}
 
 		// HTTP-Signatureの検証
-		const httpSignatureValidated = httpSignature.verifySignature(signature, authUser.key.keyPem);
+		const httpSignatureValidated = httpSignature.verifySignature(
+			signature,
+			authUser.key.keyPem
+		);
 
 		// また、signatureのsignerは、activity.actorと一致する必要がある
 		if (!httpSignatureValidated || authUser.user.uri !== activity.actor) {
@@ -184,7 +189,7 @@ export class InboxProcessorService implements OnApplicationShutdown {
 		}
 
 		// activity.idがあればホストが署名者のホストであることを確認する
-		if (typeof activity.id === 'string') {
+		if (typeof activity.id === "string") {
 			const signerHost = this.utilityService.extractDbHost(authUser.user.uri!);
 			const activityIdHost = this.utilityService.extractDbHost(activity.id);
 			if (signerHost !== activityIdHost) {

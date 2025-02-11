@@ -75,6 +75,11 @@ export class DriveFileEntityService {
 
 	@bindThis
 	private getProxiedUrl(url: string, mode?: 'static' | 'avatar'): string {
+		// みすほわ独自: 動画であればproxyさせない
+		if (url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.m4v') || url.endsWith('.3gp')) {
+			return url;
+		}
+
 		return appendQuery(
 			`${this.config.mediaProxy}/${mode ?? 'image'}.webp`,
 			query({
