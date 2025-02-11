@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
 					<div class="bkzroven" style="container-type: inline-size;">
-						<RouterView/>
+						<RouterView nested/>
 					</div>
 				</div>
 			</div>
@@ -44,7 +44,7 @@ const indexInfo = {
 	icon: 'ti ti-settings',
 	hideHeader: true,
 };
-const INFO = ref(indexInfo);
+const INFO = ref<PageMetadata>(indexInfo);
 const el = shallowRef<HTMLElement | null>(null);
 const childInfo = ref<null | PageMetadata>(null);
 
@@ -197,9 +197,6 @@ const menuDef = computed(() => [{
 		danger: true,
 	}],
 }]);
-
-watch(narrow, () => {
-});
 
 onMounted(() => {
 	ro.observe(el.value);
