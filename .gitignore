@@ -1,3 +1,10 @@
+# ADD MISSKEY WHITE
+# ローカル作業用（本番はdockerじゃないので影響ないはず）
+compose.yml
+
+# END ===
+
+
 # Visual Studio Code
 /.vscode
 !/.vscode/extensions.json
@@ -46,6 +53,7 @@ docker-compose.yml
 built
 built-test
 js-built
+src-js
 /data
 /.cache-loader
 /db
