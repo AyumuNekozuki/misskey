@@ -21,7 +21,7 @@ export class MiMeta {
 	})
 	public rootUserId: MiUser['id'] | null;
 
-	@ManyToOne(type => MiUser, {
+	@ManyToOne(() => MiUser, {
 		onDelete: 'SET NULL',
 		nullable: true,
 	})
@@ -654,7 +654,7 @@ export class MiMeta {
 
 	@Column('varchar', {
 		length: 128,
-		default: 'all',
+		default: 'none',
 	})
 	public federation: 'all' | 'specified' | 'none';
 
@@ -701,6 +701,35 @@ export class MiMeta {
 		default: true,
 	})
 	public allowExternalApRedirect: boolean;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public enableRemoteNotesCleaning: boolean;
+
+	@Column('integer', {
+		default: 60, // minutes
+	})
+	public remoteNotesCleaningMaxProcessingDurationInMinutes: number;
+
+	@Column('integer', {
+		default: 90, // days
+	})
+	public remoteNotesCleaningExpiryDaysForEachNotes: number;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public showRoleBadgesOfRemoteUsers: boolean;
+
+	@Column('jsonb', {
+		default: { },
+	})
+	public clientOptions: {
+		entrancePageStyle: 'classic' | 'simple';
+		showTimelineForVisitor: boolean;
+		showActivitiesForVisitor: boolean;
+	};
 }
 
 export type SoftwareSuspension = {
