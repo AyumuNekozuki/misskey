@@ -23,6 +23,13 @@ async function respondToNavigation(request: Request): Promise<Response> {
 		const response = await fetch(request, { signal: controller.signal });
 
 		if (response?.status && response.status < 500) return response;
+
+		// 計画メンテナンス中は、エッジ (Cloudflare Workers) が 5xx でメンテナンス画面を返す。
+		// これは「サーバーに接続できない」状態ではないので、offline 画面に差し替えず
+		// そのまま表示する。本当にオリジンが落ちている 5xx にはこのヘッダが付かないため、
+		// 障害時に offline 画面を出す従来の挙動は維持される。
+		if (response?.headers.get('x-maintenance') === '1') return response;
+
 		if (response?.type === 'opaqueredirect') return response;
 	} catch (error) {
 		if (_DEV_) {
