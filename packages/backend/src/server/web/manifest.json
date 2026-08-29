@@ -1,6 +1,6 @@
 {
-	"short_name": "Misskey",
-	"name": "Misskey",
+	"short_name": "みすほわいと",
+	"name": "みすほわいと",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#313a42",
@@ -19,7 +19,7 @@
 			"purpose": "maskable"
 		},
 		{
-			"src": "/static-assets/splash.png",
+			"src": "/static-assets/icons/300.png",
 			"sizes": "300x300",
 			"type": "image/png",
 			"purpose": "any"
